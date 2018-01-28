@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">   
+   <!-- Apache datasource configuration -->
+   <bean id="ds" class="org.apache.commons.dbcp.BasicDataSource">
+   		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+   		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl"/>
+   		<property name="username" value="system"/>
+   		<property name="password" value="Oracle@1"/>   
+   </bean>
+   <bean id="lsfb" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+   		<property name="dataSource" ref="ds"></property>
+   		<property name="mappingResources">
+   			<list>
+   				<value>com/sankar/hibernate/mapping/Account.hbm.xml</value>
+   			</list>
+   		</property>
+   		
+   		<property name="hibernateProperties">
+   			<props>
+   				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop>  
+                <prop key="hibernate.hbm2ddl.auto">create</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+   			</props>   		
+   		</property>   		
+   </bean>   
+   
+   <bean id="ht" class="org.springframework.orm.hibernate4.HibernateTemplate">
+   		<constructor-arg ref="lsfb"></constructor-arg>
+   </bean>
+   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"> 
+    <property name="sessionFactory" ref="lsfb"/> 
+	</bean>
+   
+   <bean id="daoImpl" class="com.sankar.spring.dao.AccountDAOImpl">
+   		<property name="hibernateTemplate" ref="ht"/>
+   </bean>  
+</beans>
